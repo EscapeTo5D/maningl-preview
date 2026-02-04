@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__zread__get_repo_structure",
+      "mcp__zread__read_file",
+      "WebSearch",
+      "mcp__web-search-prime__webSearchPrime",
+      "mcp__web-reader__webReader",
+      "Bash(npm run compile:*)"
+    ]
+  }
+}

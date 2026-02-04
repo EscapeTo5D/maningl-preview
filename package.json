@@ -1,0 +1,149 @@
+{
+  "name": "maningl-preview",
+  "displayName": "maningl-preview",
+  "description": "manimgl实时预览",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.108.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:python"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "maningl-preview.runScene",
+        "title": "Manim: Run Current Scene",
+        "category": "ManimGL"
+      },
+      {
+        "command": "maningl-preview.checkpointPaste",
+        "title": "Manim: Checkpoint Paste",
+        "category": "ManimGL"
+      },
+      {
+        "command": "maningl-preview.checkpointPasteRecorded",
+        "title": "Manim: Checkpoint Paste with Record",
+        "category": "ManimGL"
+      },
+      {
+        "command": "maningl-preview.checkpointPasteSkipped",
+        "title": "Manim: Checkpoint Paste with Skip",
+        "category": "ManimGL"
+      },
+      {
+        "command": "maningl-preview.exitScene",
+        "title": "Manim: Exit Scene",
+        "category": "ManimGL"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "maningl-preview.runScene",
+          "when": "editorLangId == python",
+          "group": "maningl@1"
+        },
+        {
+          "command": "maningl-preview.checkpointPaste",
+          "when": "editorLangId == python && editorHasSelection",
+          "group": "maningl@2"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "maningl-preview.runScene",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorLangId == python"
+      },
+      {
+        "command": "maningl-preview.checkpointPaste",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorLangId == python && editorHasSelection"
+      },
+      {
+        "command": "maningl-preview.checkpointPasteRecorded",
+        "key": "ctrl+shift+alt+r",
+        "mac": "cmd+shift+alt+r",
+        "when": "editorLangId == python && editorHasSelection"
+      },
+      {
+        "command": "maningl-preview.exitScene",
+        "key": "ctrl+shift+q",
+        "mac": "cmd+shift+q",
+        "when": "terminalFocus"
+      }
+    ],
+    "configuration": {
+      "title": "ManimGL Preview",
+      "properties": {
+        "maningl.manimglPath": {
+          "type": "string",
+          "default": "manimgl",
+          "description": "ManimGL 可执行文件名（默认 manimgl，自动定位）或绝对路径（如 D:\\\\.venv\\\\Scripts\\\\manimgl.exe）"
+        },
+        "maningl.terminalName": {
+          "type": "string",
+          "default": "ManimGL Terminal",
+          "description": "创建或使用的终端名称"
+        },
+        "maningl.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "运行场景前自动保存文件"
+        },
+        "maningl.copyCommandToClipboard": {
+          "type": "boolean",
+          "default": true,
+          "description": "运行场景时复制命令到剪贴板"
+        },
+        "maningl.projectRoot": {
+          "type": "string",
+          "default": "",
+          "description": "ManimGL 项目根目录（包含 custom_config.yml 的目录）。留空则自动向上搜索"
+        },
+        "maningl.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "设置 PYTHONPATH 环境变量（如 D:\\GitHub\\manim_project\\manimgl）。用于让 Python 找到自定义模块"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.108.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0"
+  },
+  "dependencies": {
+    "@vscode/python-extension": "^1.0.6"
+  }
+}
