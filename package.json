@@ -107,7 +107,7 @@
         "maningl.projectRoot": {
           "type": "string",
           "default": "",
-          "description": "ManimGL 项目根目录（包含 custom_config.yml 的目录）。留空则自动向上搜索"
+          "description": "ManimGL 项目根目录。留空则在工作区内搜索 custom_config.yml，未找到时使用工作区根目录"
         },
         "maningl.pythonPath": {
           "type": "string",
