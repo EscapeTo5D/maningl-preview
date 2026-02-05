@@ -35,27 +35,42 @@ export async function checkpointPaste(options: CheckpointPasteOptions = {}): Pro
   // 复制到剪贴板
   await vscode.env.clipboard.writeText(selectedText);
 
-  // 构建 checkpoint_paste() 命令
-  const terminalManager = TerminalManager.getInstance();
+  // 分析选中内容（统一处理 Windows/Unix 换行符）
+  const normalizedText = selectedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = normalizedText.split('\n');
+  const firstLine = lines[0].trimStart();
+  const startsWithComment = firstLine.startsWith('#');
 
-  // 构建命令参数
-  const args: string[] = [];
-  if (options.record) {
-    args.push('record=True');
-  }
-  if (options.skip) {
-    args.push('skip=True');
-  }
+  let command: string;
 
-  const argsStr = args.length > 0 ? args.join(', ') : '';
-  const command = `checkpoint_paste(${argsStr})`;
+  if (lines.length === 1 && !startsWithComment) {
+    // 单行非注释代码：直接发送选中的内容
+    command = selectedText;
+  } else {
+    // 多行或注释开头：使用 checkpoint_paste()
+    // 构建命令参数
+    const args: string[] = [];
+    if (options.record) {
+      args.push('record=True');
+    }
+    if (options.skip) {
+      args.push('skip=True');
+    }
+    const argsStr = args.length > 0 ? args.join(', ') : '';
+
+    const comment = startsWithComment ? firstLine : '#';
+    command = `checkpoint_paste(${argsStr}) ${comment} (${lines.length} lines)`;
+  }
+  // 保存选区起始位置，然后清除选区并移动光标
+  const selection = editor.selection;
+  const startPos = selection.start;
+  editor.selection = new vscode.Selection(startPos, startPos);
 
   // 发送到终端（传递工作目录以复用已有终端）
-  const cwd = require('path').dirname(editor.document.fileName);
-  terminalManager.sendText(command, cwd);
-
-  // 显示通知
-  vscode.window.showInformationMessage('已发送代码到终端', 'hide');
+  const terminalManager = TerminalManager.getInstance();
+  const config = getConfiguration();
+  const cwd = path.dirname(editor.document.fileName);
+  terminalManager.sendText(command, config, cwd);
 }
 
 /**

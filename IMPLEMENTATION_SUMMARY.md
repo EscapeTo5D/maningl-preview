@@ -72,7 +72,7 @@ src/
 
 **键盘快捷键**：
 - `Ctrl+Shift+R` - 运行 Scene
-- `Ctrl+Shift+C` - Checkpoint Paste
+- `Alt+Shift+C` - Checkpoint Paste
 - `Ctrl+Shift+Alt+R` - Checkpoint Paste with Record
 - `Ctrl+Shift+Q` - 退出 Scene
 
@@ -153,7 +153,7 @@ src/
    self.play(Create(circle))
    ```
 
-2. 按 `Ctrl+Shift+C`
+2. 按 `Alt+Shift+C`
 
 3. **预期结果**：
    - 代码被复制到剪贴板
@@ -198,7 +198,7 @@ class ThreeDScene(ThreeDScene):
 2. 在没有 Scene 类的 Python 文件中按 `Ctrl+Shift+R`
    - **预期**：显示错误 "未找到有效的 Scene 定义"
 
-3. 没有选中代码时按 `Ctrl+Shift+C`
+3. 没有选中代码时按 `Alt+Shift+C`
    - **预期**：显示警告 "请先选中要粘贴的代码"
 
 #### 测试 7: 右键菜单

@@ -40,9 +40,28 @@ export class TerminalManager {
       // 新终端稍等一下再执行命令
       setTimeout(() => {
         terminal.sendText(command);
-      }, 200);
+      }, 300);
     } else {
       terminal.sendText(command);
+    }
+  }
+
+  /**
+   * 发送 Ctrl+C 信号到终端（中断当前运行）
+   * @param config 配置
+   */
+  sendCtrlC(config: ManimConfig): void {
+    const { terminal } = this.getOrCreateTerminal(config);
+
+    terminal.show(false); // 显示但不夺取焦点
+
+    // 发送 Ctrl+C (在 Windows 上使用 ^C)
+    if (process.platform === 'win32') {
+      // Windows: 先发送 Ctrl+C
+      terminal.sendText('\x03');
+    } else {
+      // Unix/Linux/Mac: 发送 SIGINT
+      terminal.sendText('\x03');
     }
   }
 
@@ -52,7 +71,8 @@ export class TerminalManager {
    * @param cwd 工作目录
    */
   private getOrCreateTerminal(config: ManimConfig, cwd?: string): { terminal: vscode.Terminal; isNew: boolean } {
-    const terminalName = cwd ? `${config.terminalName} - ${cwd}` : config.terminalName;
+    // 使用固定的终端名称，不再包含目录（避免每次创建新终端）
+    const terminalName = config.terminalName;
 
     // 检查是否已有匹配的终端
     if (this.terminal &&

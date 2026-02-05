@@ -4,4 +4,4 @@
 
 export { runScene } from './runScene';
 export { checkpointPaste, checkpointPasteRecorded, checkpointPasteSkipped } from './checkpointPaste';
-export { exitScene } from './exitScene';
+export { exitScene, interruptScene } from './exitScene';

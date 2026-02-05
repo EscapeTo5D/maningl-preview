@@ -45,7 +45,7 @@
 
 选中要测试的代码后：
 
-- **快捷键**：`Ctrl+Shift+C` (Windows/Linux) 或 `Cmd+Shift+C` (macOS)
+- **快捷键**：`Alt+Shift+C` (Windows/Linux) 或 `Cmd+Shift+C` (macOS)
 - **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Checkpoint Paste"
 - **右键菜单**：选中代码后右键 → "Manim: Checkpoint Paste"
 
@@ -114,7 +114,7 @@
 
 3. **迭代开发**：
    - 选中要修改的代码
-   - 按 `Ctrl+Shift+C` 发送到终端
+   - 按 `Alt+Shift+C` 发送到终端
    - ManimGL 会重新渲染这部分
 
 4. **录制最终版本**：

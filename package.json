@@ -39,6 +39,11 @@
         "command": "maningl-preview.exitScene",
         "title": "Manim: Exit Scene",
         "category": "ManimGL"
+      },
+      {
+        "command": "maningl-preview.interruptScene",
+        "title": "Manim: Interrupt Scene (Ctrl+C)",
+        "category": "ManimGL"
       }
     ],
     "menus": {
@@ -64,7 +69,7 @@
       },
       {
         "command": "maningl-preview.checkpointPaste",
-        "key": "ctrl+shift+c",
+        "key": "alt+shift+c",
         "mac": "cmd+shift+c",
         "when": "editorLangId == python && editorHasSelection"
       },
@@ -79,6 +84,12 @@
         "key": "ctrl+shift+q",
         "mac": "cmd+shift+q",
         "when": "terminalFocus"
+      },
+      {
+        "command": "maningl-preview.interruptScene",
+        "key": "ctrl+c",
+        "mac": "cmd+c",
+        "when": "terminalFocus && terminalName =~ /^ManimGL/"
       }
     ],
     "configuration": {
