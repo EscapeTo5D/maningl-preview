@@ -54,9 +54,10 @@ export class PythonEnvironmentService {
     }
 
     /**
-     * 获取当前活动的 Python 环境
+     * 获取指定资源的 Python 环境
+     * @param resource 文件或工作区 URI，用于获取对应工作区的环境
      */
-    private async getActiveEnvironment(): Promise<ResolvedEnvironment | undefined> {
+    private async getActiveEnvironment(resource?: vscode.Uri): Promise<ResolvedEnvironment | undefined> {
         const hasApi = await this.initialize();
         console.log('[ManimGL] Python Extension API 可用:', hasApi);
 
@@ -66,8 +67,12 @@ export class PythonEnvironmentService {
         }
 
         try {
-            const environmentPath = this.pythonApi.environments.getActiveEnvironmentPath();
+            // 传入 resource 获取对应工作区的环境
+            const environmentPath = this.pythonApi.environments.getActiveEnvironmentPath(resource);
             console.log('[ManimGL] 活动环境路径:', JSON.stringify(environmentPath));
+            if (resource) {
+                console.log('[ManimGL] 资源 URI:', resource.fsPath);
+            }
 
             const environment = await this.pythonApi.environments.resolveEnvironment(environmentPath);
             console.log('[ManimGL] 解析后的环境:', environment ? '成功' : '失败');
@@ -97,9 +102,11 @@ export class PythonEnvironmentService {
     /**
      * 获取 ManimGL 可执行文件路径
      * 优先级: 用户配置绝对路径 > 终端自动激活 (manimgl) > Python Extension API (完整路径)
+     * @param configManimglPath 配置的 manimgl 路径
+     * @param fileUri 当前文件的 URI，用于获取对应工作区的 Python 环境
      * @returns { path: string, mode: string, needsConfig: boolean } 路径、检测模式、是否需要配置
      */
-    async getManimglPath(configManimglPath: string): Promise<{ path: string; mode: string; needsConfig: boolean }> {
+    async getManimglPath(configManimglPath: string, fileUri?: vscode.Uri): Promise<{ path: string; mode: string; needsConfig: boolean }> {
         // 1. 如果用户配置了绝对路径，直接使用
         if (path.isAbsolute(configManimglPath)) {
             console.log('[ManimGL] 使用模式: 用户配置');
@@ -114,7 +121,7 @@ export class PythonEnvironmentService {
 
         // 3. VS Code 不会自动激活，使用 Python Extension API 获取完整路径
         console.log('[ManimGL] 终端自动激活未启用，尝试 Python Extension API...');
-        const environment = await this.getActiveEnvironment();
+        const environment = await this.getActiveEnvironment(fileUri);
 
         if (environment?.executable?.uri) {
             const pythonExePath = environment.executable.uri.fsPath;
@@ -136,3 +143,4 @@ export class PythonEnvironmentService {
         return { path: configManimglPath, mode: '未找到', needsConfig: true };
     }
 }
+

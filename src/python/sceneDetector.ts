@@ -33,15 +33,43 @@ export function detectAllScenes(document: vscode.TextDocument): SceneInfo[] {
 
   // 匹配 class ClassName(Scene): 或 class ClassName(MovingCameraScene):
   // 支持所有包含 "Scene" 的基类
-  const regex = /^\s*class\s+(\w+)\s*\(([^)]*Scene[^)]*)\)\s*:/;
+  const classRegex = /^(\s*)class\s+(\w+)\s*\(([^)]*Scene[^)]*)\)\s*:/;
+  // 匹配 def construct(self):
+  const constructRegex = /^\s*def\s+construct\s*\(\s*self\s*\)\s*:/;
 
   for (let i = 0; i < lines.length; i++) {
-    const match = lines[i].match(regex);
-    if (match) {
+    const classMatch = lines[i].match(classRegex);
+    if (classMatch) {
+      const classIndent = classMatch[1].length;
+      let constructLine = i; // 默认使用类定义行
+
+      // 向下搜索 def construct(self):
+      for (let j = i + 1; j < lines.length; j++) {
+        const line = lines[j];
+
+        // 跳过空行和注释
+        if (line.trim() === '' || line.trim().startsWith('#')) {
+          continue;
+        }
+
+        // 检查缩进，如果遇到同级或更低级别的代码，停止搜索
+        const currentIndent = line.length - line.trimStart().length;
+        if (currentIndent <= classIndent && line.trim() !== '') {
+          break;
+        }
+
+        // 检查是否是 construct 方法
+        if (constructRegex.test(line)) {
+          constructLine = j;
+          break;
+        }
+      }
+
       scenes.push({
-        name: match[1],
+        name: classMatch[2],
         lineNumber: i,
-        baseClass: match[2].trim(),
+        constructLineNumber: constructLine,
+        baseClass: classMatch[3].trim(),
       });
     }
   }

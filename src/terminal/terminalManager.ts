@@ -12,8 +12,17 @@ export class TerminalManager {
   private static instance: TerminalManager;
   private terminal: vscode.Terminal | undefined;
   private terminalName: string = '';
+  private disposable: vscode.Disposable | undefined;
 
-  private constructor() { }
+  private constructor() {
+    // 监听终端关闭事件
+    this.disposable = vscode.window.onDidCloseTerminal((closedTerminal) => {
+      if (this.terminal === closedTerminal) {
+        this.terminal = undefined;
+        this.terminalName = '';
+      }
+    });
+  }
 
   /**
    * 获取单例实例
@@ -108,6 +117,10 @@ export class TerminalManager {
    * 清理资源
    */
   dispose(): void {
+    if (this.disposable) {
+      this.disposable.dispose();
+      this.disposable = undefined;
+    }
     if (this.terminal) {
       this.terminal.dispose();
       this.terminal = undefined;

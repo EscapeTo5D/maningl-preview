@@ -49,8 +49,9 @@ function findProjectRoot(fileDir: string): string {
 
 /**
  * 运行当前 Scene
+ * @param overrideLine 可选，强制使用此行号作为光标位置（用于 CodeLens 调用）
  */
-export async function runScene(): Promise<void> {
+export async function runScene(overrideLine?: number): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showWarningMessage('没有活动的编辑器');
@@ -63,8 +64,8 @@ export async function runScene(): Promise<void> {
     return;
   }
 
-  // 获取光标位置
-  const cursorLine = editor.selection.active.line;
+  // 获取光标位置（如果传入了 overrideLine，使用它）
+  const cursorLine = overrideLine !== undefined ? overrideLine : editor.selection.active.line;
 
   // 检测 Scene
   const scene = detectCurrentScene(document, cursorLine);
@@ -96,9 +97,9 @@ export async function runScene(): Promise<void> {
   // 获取项目根目录：优先使用配置，否则自动搜索
   const projectRoot = config.projectRoot || findProjectRoot(fileDir);
 
-  // 获取 manimgl 路径（自动检测或使用配置）
+  // 获取 manimgl 路径（自动检测或使用配置），传入当前文件 URI 以获取对应工作区的环境
   const pythonEnvService = PythonEnvironmentService.getInstance();
-  const manimglResult = await pythonEnvService.getManimglPath(config.manimglPath);
+  const manimglResult = await pythonEnvService.getManimglPath(config.manimglPath, document.uri);
 
   // 如果未找到 manimgl，提示用户配置
   if (manimglResult.needsConfig) {
@@ -118,17 +119,24 @@ export async function runScene(): Promise<void> {
   // 构建命令
   const command = buildManimCommand(options, manimglResult.path);
 
-  // 复制到剪贴板
+  // 复制到剪贴板（带 --finder -w 参数，方便用户手动在其他终端执行并写入文件）
   if (config.copyCommandToClipboard) {
-    await vscode.env.clipboard.writeText(command);
+    await vscode.env.clipboard.writeText(command + ' --finder -w');
   }
 
   // 发送到终端（使用项目根目录作为工作目录，传递配置用于 PYTHONPATH）
   const terminalManager = TerminalManager.getInstance();
   terminalManager.sendText(command, config, projectRoot);
 
+  // 1 秒后把焦点切回编辑器（命令已执行，可以边看动画边写代码）
+  setTimeout(() => {
+    if (editor) {
+      vscode.window.showTextDocument(editor.document, editor.viewColumn, false);
+    }
+  }, 1000);
+
   // 显示简短通知（包含检测模式）
-  vscode.window.showInformationMessage(`[${manimglResult.mode}] 运行: ${scene.name}`, 'hide');
+  // vscode.window.showInformationMessage(`[${manimglResult.mode}] 运行: ${scene.name}`, 'hide');
 }
 
 /**
@@ -155,9 +163,6 @@ function buildManimCommand(options: RunSceneOptions, manimglPath: string): strin
   if (options.fromLine) {
     parts.push(`-se ${options.fromLine}`);
   }
-
-  // 添加进入交互模式的参数
-  parts.push('--prerun');
 
   return parts.join(' ');
 }

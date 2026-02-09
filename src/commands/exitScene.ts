@@ -17,9 +17,6 @@ export async function exitScene(): Promise<void> {
   // 先发送 Ctrl+C 中断当前动画，再发送 quit 命令
   // 模仿 Sublime 插件: send_terminus_command("\x03quit\n")
   terminalManager.sendText('\x03quit', config);
-
-  // 显示通知
-  vscode.window.showInformationMessage('已退出 Scene', 'hide');
 }
 
 /**

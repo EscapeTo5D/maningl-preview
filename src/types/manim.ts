@@ -8,8 +8,10 @@
 export interface SceneInfo {
   /** Scene 类名 */
   name: string;
-  /** 定义行号（从 0 开始） */
+  /** 类定义行号（从 0 开始） */
   lineNumber: number;
+  /** construct 方法行号（从 0 开始） */
+  constructLineNumber: number;
   /** 基类名称（如 Scene, MovingCameraScene） */
   baseClass: string;
 }

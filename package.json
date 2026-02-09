@@ -2,7 +2,7 @@
   "name": "maningl-preview",
   "displayName": "maningl-preview",
   "description": "manimgl实时预览",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.108.1"
   },
@@ -44,6 +44,11 @@
         "command": "maningl-preview.interruptScene",
         "title": "Manim: Interrupt Scene (Ctrl+C)",
         "category": "ManimGL"
+      },
+      {
+        "command": "maningl-preview.commentFold",
+        "title": "Manim: Fold Comment Sections",
+        "category": "ManimGL"
       }
     ],
     "menus": {
@@ -71,13 +76,19 @@
         "command": "maningl-preview.checkpointPaste",
         "key": "alt+shift+c",
         "mac": "cmd+shift+c",
-        "when": "editorLangId == python && editorHasSelection"
+        "when": "editorLangId == python"
       },
       {
         "command": "maningl-preview.checkpointPasteRecorded",
         "key": "ctrl+shift+alt+r",
         "mac": "cmd+shift+alt+r",
-        "when": "editorLangId == python && editorHasSelection"
+        "when": "editorLangId == python"
+      },
+      {
+        "command": "maningl-preview.checkpointPasteSkipped",
+        "key": "ctrl+shift+alt+s",
+        "mac": "cmd+shift+alt+s",
+        "when": "editorLangId == python"
       },
       {
         "command": "maningl-preview.exitScene",
@@ -90,6 +101,18 @@
         "key": "ctrl+c",
         "mac": "cmd+c",
         "when": "terminalFocus && terminalName =~ /^ManimGL/"
+      },
+      {
+        "command": "maningl-preview.commentFold",
+        "key": "ctrl+alt+f",
+        "mac": "cmd+alt+f",
+        "when": "editorLangId == python && editorHasSelection"
+      },
+      {
+        "command": "maningl-preview.copyCameraState",
+        "key": "ctrl+alt+c",
+        "mac": "cmd+alt+c",
+        "when": "terminalFocus"
       }
     ],
     "configuration": {
@@ -118,12 +141,12 @@
         "maningl.projectRoot": {
           "type": "string",
           "default": "",
-          "description": "ManimGL 项目根目录。留空则在工作区内搜索 custom_config.yml，未找到时使用工作区根目录"
+          "description": "custom_config.yml所在目录。留空则在工作区内搜索 custom_config.yml，未找到时使用工作区根目录"
         },
         "maningl.pythonPath": {
           "type": "string",
           "default": "",
-          "description": "设置 PYTHONPATH 环境变量（如 D:\\GitHub\\manim_project\\manimgl）。用于让 Python 找到自定义模块"
+          "description": "设置 PYTHONPATH 环境变量。用于让 Python 找到自定义模块"
         }
       }
     }

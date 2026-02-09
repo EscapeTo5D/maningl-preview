@@ -25,27 +25,38 @@ export async function checkpointPaste(options: CheckpointPasteOptions = {}): Pro
     return;
   }
 
-  // 获取选中的文本
-  const selectedText = getSelectedText(editor);
-  if (!selectedText) {
-    vscode.window.showWarningMessage('请先选中要粘贴的代码');
-    return;
+  // 获取选区信息
+  const selection = editor.selection;
+  const hasSelection = !selection.isEmpty;
+
+  // 获取行信息
+  const startLine = selection.start.line;
+  const endLine = hasSelection ? selection.end.line : startLine;
+  const lineCount = endLine - startLine + 1;
+
+  // 获取第一行的完整内容
+  const firstLineText = document.lineAt(startLine).text;
+  const firstLineTrimmed = firstLineText.trimStart();
+  const startsWithComment = firstLineTrimmed.startsWith('#');
+
+  // 确定要使用的文本
+  let textToUse: string;
+  if (hasSelection) {
+    // 有选区：使用选中的文本
+    textToUse = getSelectedText(editor) || firstLineTrimmed;
+  } else {
+    // 无选区：使用当前行完整内容
+    textToUse = firstLineTrimmed;
   }
 
   // 复制到剪贴板
-  await vscode.env.clipboard.writeText(selectedText);
-
-  // 分析选中内容（统一处理 Windows/Unix 换行符）
-  const normalizedText = selectedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  const lines = normalizedText.split('\n');
-  const firstLine = lines[0].trimStart();
-  const startsWithComment = firstLine.startsWith('#');
+  await vscode.env.clipboard.writeText(textToUse);
 
   let command: string;
 
-  if (lines.length === 1 && !startsWithComment) {
-    // 单行非注释代码：直接发送选中的内容
-    command = selectedText;
+  if (lineCount === 1 && !startsWithComment) {
+    // 单行非注释代码：发送选中的内容（如果选了部分则发送部分）
+    command = textToUse;
   } else {
     // 多行或注释开头：使用 checkpoint_paste()
     // 构建命令参数
@@ -58,11 +69,10 @@ export async function checkpointPaste(options: CheckpointPasteOptions = {}): Pro
     }
     const argsStr = args.length > 0 ? args.join(', ') : '';
 
-    const comment = startsWithComment ? firstLine : '#';
-    command = `checkpoint_paste(${argsStr}) ${comment} (${lines.length} lines)`;
+    const comment = startsWithComment ? firstLineTrimmed : '#';
+    command = `checkpoint_paste(${argsStr}) ${comment} (${lineCount} lines)`;
   }
-  // 保存选区起始位置，然后清除选区并移动光标
-  const selection = editor.selection;
+  // 清除选区并移动光标到起始位置
   const startPos = selection.start;
   editor.selection = new vscode.Selection(startPos, startPos);
 
@@ -71,6 +81,13 @@ export async function checkpointPaste(options: CheckpointPasteOptions = {}): Pro
   const config = getConfiguration();
   const cwd = path.dirname(editor.document.fileName);
   terminalManager.sendText(command, config, cwd);
+
+  // 1 秒后把焦点切回编辑器（命令已执行，可以边看动画边写代码）
+  setTimeout(() => {
+    if (editor) {
+      vscode.window.showTextDocument(editor.document, editor.viewColumn, false);
+    }
+  }, 1000);
 }
 
 /**

@@ -68,7 +68,22 @@
 - **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Checkpoint Paste with Skip"
 - 向终端发送 `checkpoint_paste(skip=True)`
 
-### 5. 退出 Scene
+### 5. 复制相机状态
+
+- **快捷键**：`Ctrl+Alt+C` (Windows/Linux) 或 `Cmd+Alt+C` (macOS)
+- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Copy Camera State"
+- **功能**：
+  - 获取当前 ManimGL 窗口的相机状态
+  - 复制为 `frame.reorient(...)` 代码到剪贴板
+
+### 6. 折叠注释区域
+
+- **快捷键**：`Ctrl+Alt+F` (Windows/Linux) 或 `Cmd+Alt+F` (macOS)
+- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Fold Comment Sections"
+- **功能**：
+  - 折叠所有以 `#` 开头的顶级注释块下的代码区域
+
+### 7. 退出 Scene
 
 - **快捷键**：`Ctrl+Shift+Q` (Windows/Linux) 或 `Cmd+Shift+Q` (macOS)
 - **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Exit Scene"
