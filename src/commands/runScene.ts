@@ -9,6 +9,7 @@ import { detectCurrentScene } from '../python/sceneDetector';
 import { getConfiguration } from '../config/configuration';
 import { TerminalManager } from '../terminal/terminalManager';
 import { PythonEnvironmentService } from '../python/pythonEnvironment';
+import { checkpointState } from '../state/checkpointState';
 import type { RunSceneOptions } from '../types/manim';
 
 /**
@@ -50,8 +51,16 @@ function findProjectRoot(fileDir: string): string {
 /**
  * 运行当前 Scene
  * @param overrideLine 可选，强制使用此行号作为光标位置（用于 CodeLens 调用）
+ * @param sceneName 可选，场景名称（用于标记场景已启动）
+ * @param checkpointIndex 可选，从哪个 checkpoint 启动的（用于解锁到该位置）
+ * @param totalCheckpoints 可选，场景内 checkpoint 总数
  */
-export async function runScene(overrideLine?: number): Promise<void> {
+export async function runScene(
+  overrideLine?: number,
+  sceneName?: string,
+  checkpointIndex?: number,
+  totalCheckpoints?: number
+): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showWarningMessage('没有活动的编辑器');
@@ -72,6 +81,15 @@ export async function runScene(overrideLine?: number): Promise<void> {
   if (!scene) {
     vscode.window.showErrorMessage('未找到有效的 Scene 定义');
     return;
+  }
+
+  // 标记场景已启动（用于显示 checkpoint）
+  const sceneNameToUse = sceneName || scene.name;
+  checkpointState.startScene(sceneNameToUse);
+
+  // 如果从某个 checkpoint 位置启动，直接解锁到那个位置
+  if (checkpointIndex !== undefined && totalCheckpoints !== undefined) {
+    checkpointState.unlockTo(sceneNameToUse, checkpointIndex, totalCheckpoints);
   }
 
   // 自动保存

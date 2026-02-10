@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { TerminalManager } from './terminal/terminalManager';
 import { runScene } from './commands/runScene';
 import { checkpointPaste, checkpointPasteRecorded, checkpointPasteSkipped } from './commands/checkpointPaste';
+import { runCheckpointFromComment } from './commands/runCheckpointFromComment';
 import { exitScene, interruptScene } from './commands/exitScene';
 import { commentFold } from './commands/commentFold';
 import { copyCameraState } from './commands/copyCameraState';
@@ -34,6 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('maningl-preview.checkpointPaste', checkpointPaste),
     vscode.commands.registerCommand('maningl-preview.checkpointPasteRecorded', checkpointPasteRecorded),
     vscode.commands.registerCommand('maningl-preview.checkpointPasteSkipped', checkpointPasteSkipped),
+    vscode.commands.registerCommand('maningl-preview.runCheckpointFromComment', runCheckpointFromComment),
 
     // 退出/中断 Scene
     vscode.commands.registerCommand('maningl-preview.exitScene', exitScene),

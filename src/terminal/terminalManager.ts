@@ -4,6 +4,7 @@
 
 import * as vscode from 'vscode';
 import type { ManimConfig } from '../config/configuration';
+import { checkpointState } from '../state/checkpointState';
 
 /**
  * 终端管理器类
@@ -20,6 +21,8 @@ export class TerminalManager {
       if (this.terminal === closedTerminal) {
         this.terminal = undefined;
         this.terminalName = '';
+        // 预览窗口（终端）关闭时重置所有 checkpoint 状态
+        checkpointState.resetAll();
       }
     });
   }
@@ -111,6 +114,16 @@ export class TerminalManager {
     this.terminalName = terminalName;
 
     return { terminal: this.terminal, isNew: true };
+  }
+
+  /**
+   * 关闭终端
+   */
+  closeTerminal(): void {
+    if (this.terminal) {
+      this.terminal.dispose();
+      // 注意：onDidCloseTerminal 回调会自动清理 this.terminal 和重置状态
+    }
   }
 
   /**
