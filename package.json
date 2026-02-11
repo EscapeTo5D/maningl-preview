@@ -1,9 +1,15 @@
 {
   "name": "maningl-preview",
-  "displayName": "maningl-preview",
-  "description": "manimgl实时预览",
-  "version": "0.0.2",
+  "displayName": "ManimGL Interactive",
+  "description": "Interactive development tools for ManimGL",
+  "version": "0.1.0",
+  "publisher": "escapeto5d",
   "icon": "Logo.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EscapeTo5D/maningl-preview"
+  },
   "engines": {
     "vscode": "^1.108.1"
   },

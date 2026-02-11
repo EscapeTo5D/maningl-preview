@@ -1,198 +1,67 @@
-# ManimGL Preview - VS Code 扩展
+<div align="center">
+  <img src="LogoScene.png" alt="ManimGL Preview" width="600">
+</div>
 
-为 ManimGL 动画制作提供实时预览和开发工具的 VS Code 扩展。
+# ManimGL Interactive
 
-## 功能特性
+一个 VS Code 扩展，为 [ManimGL](https://github.com/3b1b/manim) 提供实时预览和交互式开发体验。
 
-- ✅ **运行 Scene** - 自动检测并运行当前光标位置的 Scene 类
-- ✅ **Checkpoint Paste** - 将选中的代码发送到 ManimGL 终端
-- ✅ **多种 Checkpoint 模式** - 支持普通、录制、跳过三种模式
-- ✅ **终端管理** - 自动创建和复用 ManimGL 终端
-- ✅ **配置灵活** - 可配置 Python 路径、命令等
+## 前提条件
 
-## 安装
+- **ManimGL 安装**：确保已安装 ManimGL 并可在终端中使用。
+- **Python 环境**：扩展使用当前活动的 Python 环境。
+- **自定义路径**：如果 manimgl 不在 PATH 中，可在设置中配置 `maningl.manimglPath`。
 
-### 从源码安装
+## 快速开始
 
-1. 克隆仓库到本地
-2. 安装依赖：`npm install`
-3. 编译：`npm run compile`
-4. 按 F5 启动调试（会打开新的 VS Code 窗口）
+1. 打开包含 Scene 类的 Python 文件
+2. 点击 `construct` 方法上方的 **`▶ Run Scene`** 启动场景
+3. 点击注释行上方的 **Checkpoint 按钮** 逐步执行动画
 
-### 打包安装
+## 功能
 
-运行：`npm run package`
+### CodeLens 按钮
 
-生成的 `.vsix` 文件可以在 VS Code 中安装。
+扩展会自动在代码中显示可交互的按钮：
 
-## 使用方法
+| 按钮 | 说明 |
+|------|------|
+| `▶ Run Scene` | 运行场景（未启动时所有 checkpoint 位置都显示此按钮） |
+| `🔒 CheckpointPaste` | 锁定状态，点击解锁 |
+| `▶ CheckpointPaste` | 已解锁，点击执行 |
+| `✅ CheckpointPaste` | 已执行，点击重新执行 |
 
-### 1. 运行 Scene
+### 选中执行
 
-在 Python 文件中：
+选中部分代码后点击任意 Checkpoint 按钮，会执行选中的内容而不影响 checkpoint 进度。
 
-- **快捷键**：`Ctrl+Shift+R` (Windows/Linux) 或 `Cmd+Shift+R` (macOS)
-- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Run Current Scene"
-- **右键菜单**：在编辑器中右键 → "Manim: Run Current Scene"
+### 复制相机状态
 
-**功能**：
-- 自动检测光标所在的 Scene 类
-- 如果光标不在 Scene 定义行，会添加 `-se` 参数从指定行开始渲染
-- 自动保存文件（可配置）
-- 可选复制命令到剪贴板
+获取当前 ManimGL 窗口的相机状态，复制为 `frame.reorient(...)` 代码。
 
-### 2. Checkpoint Paste
+## 快捷键
 
-选中要测试的代码后：
+| 功能 | Windows/Linux | macOS |
+|------|--------------|-------|
+| 运行 Scene | `Ctrl+Shift+R` | `Cmd+Shift+R` |
+| Checkpoint Paste | `Alt+Shift+C` | `Cmd+Shift+C` |
+| Checkpoint Paste (录制) | `Ctrl+Shift+Alt+R` | `Cmd+Shift+Alt+R` |
+| 复制相机状态 | `Ctrl+Alt+C` | `Cmd+Alt+C` |
+| 退出 Scene | `Ctrl+Shift+Q` | `Cmd+Shift+Q` |
 
-- **快捷键**：`Alt+Shift+C` (Windows/Linux) 或 `Cmd+Shift+C` (macOS)
-- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Checkpoint Paste"
-- **右键菜单**：选中代码后右键 → "Manim: Checkpoint Paste"
+## 配置
 
-**功能**：
-- 将选中的代码复制到剪贴板
-- 向终端发送 `checkpoint_paste()` 命令
-- ManimGL 会从剪贴板读取代码并执行
-
-### 3. Checkpoint Paste with Record
-
-用于需要录制的场景：
-
-- **快捷键**：`Ctrl+Shift+Alt+R` (Windows/Linux) 或 `Cmd+Shift+Alt+R` (macOS)
-- 向终端发送 `checkpoint_paste(record=True)`
-
-### 4. Checkpoint Paste with Skip
-
-跳过某些代码：
-
-- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Checkpoint Paste with Skip"
-- 向终端发送 `checkpoint_paste(skip=True)`
-
-### 5. 复制相机状态
-
-- **快捷键**：`Ctrl+Alt+C` (Windows/Linux) 或 `Cmd+Alt+C` (macOS)
-- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Copy Camera State"
-- **功能**：
-  - 获取当前 ManimGL 窗口的相机状态
-  - 复制为 `frame.reorient(...)` 代码到剪贴板
-
-### 6. 折叠注释区域
-
-- **快捷键**：`Ctrl+Alt+F` (Windows/Linux) 或 `Cmd+Alt+F` (macOS)
-- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Fold Comment Sections"
-- **功能**：
-  - 折叠所有以 `#` 开头的顶级注释块下的代码区域
-
-### 7. 退出 Scene
-
-- **快捷键**：`Ctrl+Shift+Q` (Windows/Linux) 或 `Cmd+Shift+Q` (macOS)
-- **命令面板**：`Ctrl+Shift+P` → 输入 "Manim: Exit Scene"
-
-## 配置选项
-
-在 VS Code 设置中搜索 "ManimGL" 或在 `settings.json` 中配置：
-
-```json
-{
-  // Python 可执行文件路径
-  "maningl.pythonPath": "python",
-
-  // ManimGL 命令（manimgl 或 manim）
-  "maningl.command": "manimgl",
-
-  // 终端名称
-  "maningl.terminalName": "ManimGL Terminal",
-
-  // 运行前自动保存
-  "maningl.autoSave": true,
-
-  // 复制命令到剪贴板
-  "maningl.copyCommandToClipboard": true
-}
-```
-
-## 工作流程示例
-
-### 基本动画开发流程
-
-1. **编写 Scene 代码**：
-   ```python
-   from manim import *
-
-   class MyScene(Scene):
-       def construct(self):
-           circle = Circle()
-           self.play(Create(circle))
-   ```
-
-2. **运行 Scene**：按 `Ctrl+Shift+R`
-
-3. **迭代开发**：
-   - 选中要修改的代码
-   - 按 `Alt+Shift+C` 发送到终端
-   - ManimGL 会重新渲染这部分
-
-4. **录制最终版本**：
-   - 选中代码
-   - 按 `Ctrl+Shift+Alt+R` 使用录制模式
-
-## Scene 检测规则
-
-扩展会查找符合以下规则的类定义：
-
-- 继承自 `Scene` 的类：`class MyScene(Scene):`
-- 继承自 Scene 子类的类：`class MyScene(MovingCameraScene):`
-- 所有包含 "Scene" 的基类
-
-**光标位置逻辑**：
-- 如果光标在 Scene 类内部，运行该 Scene
-- 如果光标在多个 Scene 之间，运行光标之前最近的 Scene
-
-## 文件结构
-
-```
-maningl-preview/
-├── src/
-│   ├── extension.ts              # 主入口
-│   ├── commands/                 # 命令处理器
-│   │   ├── runScene.ts
-│   │   ├── checkpointPaste.ts
-│   │   └── exitScene.ts
-│   ├── python/
-│   │   └── sceneDetector.ts      # Scene 检测
-│   ├── terminal/
-│   │   └── terminalManager.ts    # 终端管理
-│   ├── config/
-│   │   └── configuration.ts      # 配置管理
-│   └── types/
-│       └── manim.ts              # 类型定义
-├── package.json
-└── README.md
-```
-
-## 开发
-
-### 编译
-
-```bash
-npm run compile
-```
-
-### 监听模式
-
-```bash
-npm run watch
-```
-
-### 运行测试
-
-```bash
-npm run test
-```
+| 设置 | 说明 | 默认值 |
+|------|------|--------|
+| `maningl.manimglPath` | ManimGL 可执行文件路径 | `""` (自动检测) |
+| `maningl.pythonPath` | Python 模块搜索路径 (PYTHONPATH) | `""` |
+| `maningl.terminalName` | 终端名称 | `"ManimGL Terminal"` |
+| `maningl.autoSave` | 运行前自动保存 | `true` |
+| `maningl.projectRoot` | ManimGL 项目根目录 | `""` |
 
 ## 致谢
 
-本扩展灵感来自 3Blue1Brown (Grant Sanderson) 的 Sublime Text 自定义命令插件。
+灵感来自 [3Blue1Brown](https://github.com/3b1b) 的 Sublime Text 自定义命令插件。
 
 ## 许可证
 
