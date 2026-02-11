@@ -96,8 +96,8 @@ export class SceneCodeLensProvider implements vscode.CodeLensProvider {
                     title = '▶ Run Scene';
                     tooltip = `运行 ${scene.name} 后解锁 checkpoint`;
                     command = 'maningl-preview.runScene';
-                    // 传递 checkpoint 索引，启动后直接解锁到这里
-                    args = [scene.constructLineNumber, scene.name, idx, totalCheckpoints];
+                    // 传递 checkpoint 行号用于 -se 参数，以及索引用于解锁
+                    args = [startLine, scene.name, idx, totalCheckpoints];
                 } else {
                     // 场景已启动，检查 checkpoint 状态
                     const isExecuted = checkpointState.isExecuted(scene.name, idx);

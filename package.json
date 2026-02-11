@@ -3,6 +3,7 @@
   "displayName": "maningl-preview",
   "description": "manimgl实时预览",
   "version": "0.0.2",
+  "icon": "Logo.png",
   "engines": {
     "vscode": "^1.108.1"
   },
